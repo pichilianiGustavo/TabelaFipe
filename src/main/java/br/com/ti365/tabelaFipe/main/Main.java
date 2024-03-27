@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import br.com.ti365.tabelaFipe.model.Vehicle;
+import br.com.ti365.tabelaFipe.model.VehicleModel;
 import br.com.ti365.tabelaFipe.properties.ParallelumApiConfigProperties;
 import br.com.ti365.tabelaFipe.service.interfaces.ApiConsumer;
 import br.com.ti365.tabelaFipe.service.interfaces.DataConverter;
@@ -41,20 +43,24 @@ public class Main {
 	public void showMenu() {
 
 		var vehicleOption = chooseVehicleOption();
-		System.out.println("\nOpção de veículos escolhida: " + vehicleMapper.get(vehicleOption));
-		System.out.println("\nURL da Requisição: " + parallelumApiConfigProperties.getBase()
-				+ vehicleMapper.get(vehicleOption).toLowerCase());
 		var jsonResponse = fipeApiConsumer.getApiData(parallelumApiConfigProperties.getBase()
 				+ vehicleMapper.get(vehicleOption).toLowerCase() + parallelumApiConfigProperties.getBrands());
 		List<Vehicle> vehicleListData = new ArrayList<Vehicle>();
-		vehicleListData = converter.getData(jsonResponse, new TypeReference<List<Vehicle>>() {
+		vehicleListData = converter.getListFromJsonString(jsonResponse, new TypeReference<List<Vehicle>>() {
 		});
 		vehicleListData.stream().forEach(System.out::println);
 		var chosenVehicle = chooseVehicleCode(vehicleListData);
-		System.out.println(chosenVehicle);
 		jsonResponse = fipeApiConsumer.getApiData(parallelumApiConfigProperties.getBase()
 				+ vehicleMapper.get(vehicleOption).toLowerCase() + parallelumApiConfigProperties.getBrands()
 				+ chosenVehicle.getCode() + parallelumApiConfigProperties.getModels());
+		List<VehicleModel> vehicleModelList = new ArrayList<VehicleModel>();
+		vehicleModelList = converter.getListFromJsonNode(jsonResponse, "modelos", new TypeReference<List<VehicleModel>>() {});
+		vehicleModelList.stream().forEach(System.out::println);
+		VehicleModel chosenVehicleModel = chooseVehicleModelCode(vehicleModelList);
+		System.out.println(chosenVehicleModel);
+		jsonResponse = fipeApiConsumer.getApiData(parallelumApiConfigProperties.getBase()
+				+ vehicleMapper.get(vehicleOption).toLowerCase() + parallelumApiConfigProperties.getBrands()
+				+ chosenVehicle.getCode() + parallelumApiConfigProperties.getModels() + chosenVehicleModel.getCode() + parallelumApiConfigProperties.getYears());
 		System.out.println(jsonResponse);
 	}
 
@@ -69,30 +75,25 @@ public class Main {
 		return vehicleOption;
 	}
 
-	private Vehicle chooseVehicleCode(List<Vehicle> vehicleList) {
+	private <T> T chooseItem(List<T> itemList, Function<T, String> getCode, String className) {
 	    System.out.println("\n###############################################################"
-	            + "\n Digite o código do veículo que deseja: ");
-	    String vehicleCodeOption = scanner.nextLine();
-	    for (Vehicle vehicle : vehicleList) {
-	        if (vehicle.getCode().equals(vehicleCodeOption)) {
-	            return vehicle;
+	            + "\n Digite o código do " + className + " que deseja: ");
+	    String itemCodeOption = scanner.nextLine();
+	    for (T item : itemList) {
+	        if (getCode.apply(item).equals(itemCodeOption)) {
+	            return item;
 	        }
 	    }
 
-	    System.out.println("Veículo não encontrado!");
-	    return chooseVehicleCode(vehicleList);
+	    System.out.println(className + " não encontrado!");
+	    return chooseItem(itemList, getCode, className);
 	}
-//	TODO Implementation
-//	private Vehicle chooseModelCode(List<Vehicle> vehicleList) {
-//		System.out.println("\n###############################################################"
-//				+ "\n Digite o código do veículo que deseja: ");
-//		final var vehicleCodeOption = reader.nextLine();
-//		Vehicle chosenVehicle = vehicleList.stream().filter(vehicle -> vehicle.getCode().equals(vehicleCodeOption))
-//				.findFirst().orElse(null);
-//		while (chosenVehicle == null) {
-//			System.out.println("Veículo não encontrado! Por favor, digite novamente.");
-//			chosenVehicle = chooseModelCode(vehicleList);
-//		}
-//		return chosenVehicle;
-//	}
+
+	private Vehicle chooseVehicleCode(List<Vehicle> vehicleList) {
+	    return chooseItem(vehicleList, Vehicle::getCode, "Veículo");
+	}
+
+	private VehicleModel chooseVehicleModelCode(List<VehicleModel> vehicleModelList) {
+	    return chooseItem(vehicleModelList, VehicleModel::getCode, "Modelo do Veículo");
+	}
 }
