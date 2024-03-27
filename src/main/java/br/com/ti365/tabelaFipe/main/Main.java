@@ -79,7 +79,7 @@ public class Main {
 			VehicleData vehicleData = converter.getObjectFromJsonString(jsonAux, VehicleData.class);
 			vehicleDataList.add(vehicleData);
 		}
-		System.out.println(vehicleDataList);
+		vehicleDataList.forEach(System.out::println);
 	}
 
 	private String chooseVehicleOption() {
