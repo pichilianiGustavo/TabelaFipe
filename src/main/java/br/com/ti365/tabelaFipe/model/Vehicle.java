@@ -10,15 +10,15 @@ import lombok.Data;
 public class Vehicle {
 	
 	@JsonAlias("codigo")
-	protected String code;
+	protected String brandCode;
 	@JsonAlias("nome")
-	private String brand;
+	private String brandName;
 	
 	@Override
 	public String toString() {
 	    return "Veículo{" +
-	            "Nome da Marca='" + brand + '\'' +
-	            ",Código da Marca='" + code + '\'' +
+	            "Nome da Marca='" + brandName + '\'' +
+	            ",Código da Marca='" + brandCode + '\'' +
 	            '}';
 	}
 }

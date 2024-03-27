@@ -42,5 +42,19 @@ public class FipeDataConverter implements DataConverter{
             throw new RuntimeException(e);
         }
     }
+	
+	@Override
+	public <T> T getObjectFromJsonString(String json, Class<T> genericClass) {
+		try {
+			return mapper.readValue(json, genericClass);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
 
 }

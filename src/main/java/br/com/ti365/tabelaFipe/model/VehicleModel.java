@@ -7,18 +7,18 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VehicleModel {
+public class VehicleModel{
 
 	@JsonAlias("nome")
 	private String modelName;
 	@JsonAlias("codigo")
-	private String code;
+	private String modelCode;
 
 	@Override
 	public String toString() {
 	    return "Modelo do Veículo{" +
 	            "Nome do Modelo='" + modelName + '\'' +
-	            ",Código do Modelo='" + code + '\'' +
+	            ",Código do Modelo='" + modelCode + '\'' +
 	            '}';
 	}
 	

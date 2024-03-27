@@ -9,4 +9,6 @@ public interface DataConverter {
 	<T> List<T> getListFromJsonString(String json, TypeReference<List<T>> typeReference);
 
 	<T> List<T> getListFromJsonNode(String json, String node, TypeReference<List<T>> typeReference);
+
+	<T> T getObjectFromJsonString(String json, Class<T> genericClass);
 }
