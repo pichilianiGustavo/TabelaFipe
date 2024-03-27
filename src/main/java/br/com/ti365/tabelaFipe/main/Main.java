@@ -60,12 +60,10 @@ public class Main {
 				});
 		vehicleModelList.stream().forEach(System.out::println);
 		VehicleModel chosenVehicleModel = chooseVehicleModelCode(vehicleModelList);
-		System.out.println(chosenVehicleModel);
 		jsonResponse = fipeApiConsumer.getApiData(parallelumApiConfigProperties.getBase()
 				+ VEHICLE_MAPPER.get(vehicleOption).toLowerCase() + parallelumApiConfigProperties.getBrands()
 				+ chosenVehicle.getBrandCode() + parallelumApiConfigProperties.getModels()
 				+ chosenVehicleModel.getModelCode() + parallelumApiConfigProperties.getYears());
-		System.out.println(jsonResponse);
 		List<VehicleData> vehicleYearDataList = new ArrayList<VehicleData>();
 		vehicleYearDataList = converter.getListFromJsonString(jsonResponse, new TypeReference<List<VehicleData>>() {
 		});
@@ -75,7 +73,6 @@ public class Main {
 					+ VEHICLE_MAPPER.get(vehicleOption).toLowerCase() + parallelumApiConfigProperties.getBrands()
 					+ chosenVehicle.getBrandCode() + parallelumApiConfigProperties.getModels()
 					+ chosenVehicleModel.getModelCode() + parallelumApiConfigProperties.getYears() + vehicleYearDataList.get(i).getVehicleYear());
-			System.out.println(jsonAux);
 			VehicleData vehicleData = converter.getObjectFromJsonString(jsonAux, VehicleData.class);
 			vehicleDataList.add(vehicleData);
 		}
